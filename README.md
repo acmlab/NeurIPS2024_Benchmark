@@ -5,9 +5,9 @@ Code
 Dataset: (we will release all the data upon acceptance.)
 
 Data Folder Structure
+
+
 \```
-
-
 data
 ├── HCP
 │   ├── TASK_LR
