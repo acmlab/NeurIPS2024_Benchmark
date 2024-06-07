@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 from torch_geometric.loader import DataLoader as pyg_Dataloader
 
 def train_seq(model, dataset, optimizer, criterion, device):
-        batchsize = 32
+        batchsize = 64
         loader = DataLoader(dataset, batch_size=batchsize, shuffle=True, num_workers=8)
         model.train()
         losses = []
@@ -25,7 +25,7 @@ def train_seq(model, dataset, optimizer, criterion, device):
         return sum(losses)/len(losses)
     
 def test_seq(model, dataset, device):
-    batchsize = 32
+    batchsize = 64
     loader = DataLoader(dataset, batch_size=batchsize, shuffle=True, num_workers=8)
     model.eval()
     preds = []
