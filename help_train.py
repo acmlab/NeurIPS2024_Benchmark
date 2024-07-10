@@ -112,7 +112,7 @@ def run_spa(model, train, val, test, device, total_epoch):
         print(f'Epoch: {epoch:03d}, best Acc: {best_val_acc:.4f}, Test Acc: {test_acc:.4f},pre: {pre:.4f}, rec: {rec:.4f}, f1: {f1:.4f}, loss: {loss:.4f}')
 
 
-def kFold_seq(model, splits, dataset, device, total_epoch):
+def kFold_seq(model1, splits, dataset, device, total_epoch):
     acc = []
     precision = []
     f1_scores = []
@@ -120,7 +120,8 @@ def kFold_seq(model, splits, dataset, device, total_epoch):
     for i, (train_index, test_index) in enumerate(kf.split(dataset)):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
-    
+            
+        model = copy.deepcopy(model1).to(device)
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0005)
 
@@ -149,7 +150,7 @@ def kFold_seq(model, splits, dataset, device, total_epoch):
     print("parameters:", sum(p.numel() for p in model.parameters() if p.requires_grad))     
 
 
-def kFold_spa(model, splits, dataset, device, total_epoch):
+def kFold_spa(model1, splits, dataset, device, total_epoch):
     acc = []
     precision = []
     f1_scores = []
@@ -157,7 +158,8 @@ def kFold_spa(model, splits, dataset, device, total_epoch):
     for i, (train_index, test_index) in enumerate(kf.split(dataset)):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
-
+            
+        model = copy.deepcopy(model1).to(device)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=5e-4)
         
