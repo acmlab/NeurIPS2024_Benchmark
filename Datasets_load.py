@@ -341,7 +341,7 @@ def get_dataset(model_name, dataset_name):
             dataset = Dataset_ADNI(data_path, label_path, spatial=True)
         else:
             if model_name == 'MGNN':
-                dataset = Dataset_ADNI(data_path, spatial=True, graph=True, mgnn=True) 
+                dataset = Dataset_ADNI(data_path, label_path, spatial=True, graph=True, mgnn=True) 
                 return dataset
             dataset = Dataset_ADNI(data_path, label_path, spatial=True, graph=True)    
 

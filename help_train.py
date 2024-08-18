@@ -3,18 +3,22 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 from sklearn.model_selection import KFold
+import copy
 from tqdm import tqdm
 from torch.utils.data import DataLoader
 from torch_geometric.loader import DataLoader as pyg_Dataloader
+from models import get_model
 
 def train_seq(model, dataset, optimizer, criterion, device):
-        batchsize = 32
+        batchsize = 64
         loader = DataLoader(dataset, batch_size=batchsize, shuffle=True, num_workers=8)
         model.train()
         losses = []
         bar = tqdm(enumerate(loader), total=len(loader))
         for batch_idx, (input_embedding, target) in bar:
             logits,_ = model(input_embedding.to(device)) 
+            logits = logits.unsqueeze(0) if logits.dim() == 1 else logits
+
             loss = criterion(logits, target.to(device)) 
 
             optimizer.zero_grad()
@@ -25,15 +29,17 @@ def train_seq(model, dataset, optimizer, criterion, device):
         return sum(losses)/len(losses)
     
 def test_seq(model, dataset, device):
-    batchsize = 32
+    batchsize = 64
     loader = DataLoader(dataset, batch_size=batchsize, shuffle=True, num_workers=8)
     model.eval()
     preds = []
     gts = []
     bar = tqdm(enumerate(loader), total=len(loader))
     for batch_idx, (input_embedding, target) in bar:
-        out,feas = model(input_embedding.to(device))
-        pred = out.argmax(dim=-1) 
+        logits,feas = model(input_embedding.to(device))
+        logits = logits.unsqueeze(0) if logits.dim() == 1 else logits
+        
+        pred = logits.argmax(dim=-1) 
         preds.append(pred.cpu().numpy())
         gts.append(target.cpu().numpy())
 
@@ -88,6 +94,7 @@ def test_spa(model, dataset, device):
 
 
 def run_seq(model, train, val, test, device, total_epoch):
+    model = model
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0005)
     best_val_acc = 0
@@ -112,7 +119,7 @@ def run_spa(model, train, val, test, device, total_epoch):
         print(f'Epoch: {epoch:03d}, best Acc: {best_val_acc:.4f}, Test Acc: {test_acc:.4f},pre: {pre:.4f}, rec: {rec:.4f}, f1: {f1:.4f}, loss: {loss:.4f}')
 
 
-def kFold_seq(model, splits, dataset, device, total_epoch):
+def kFold_seq(model1, splits, dataset, device, total_epoch):
     acc = []
     precision = []
     f1_scores = []
@@ -120,7 +127,8 @@ def kFold_seq(model, splits, dataset, device, total_epoch):
     for i, (train_index, test_index) in enumerate(kf.split(dataset)):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
-    
+
+        model = copy.deepcopy(model1).to(device)
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0005)
 
@@ -149,7 +157,7 @@ def kFold_seq(model, splits, dataset, device, total_epoch):
     print("parameters:", sum(p.numel() for p in model.parameters() if p.requires_grad))     
 
 
-def kFold_spa(model, splits, dataset, device, total_epoch):
+def kFold_spa(model1, splits, dataset, device, total_epoch):
     acc = []
     precision = []
     f1_scores = []
@@ -158,6 +166,7 @@ def kFold_spa(model, splits, dataset, device, total_epoch):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
 
+        model = copy.deepcopy(model1).to(device)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=5e-4)
         
