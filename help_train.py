@@ -127,7 +127,11 @@ def kFold_seq(model1, splits, dataset, device, total_epoch):
     for i, (train_index, test_index) in enumerate(kf.split(dataset)):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 52cd94670142a524ae166ca548b5c66f07ac4500
         model = copy.deepcopy(model1).to(device)
         criterion = nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=0.0005)
@@ -165,7 +169,11 @@ def kFold_spa(model1, splits, dataset, device, total_epoch):
     for i, (train_index, test_index) in enumerate(kf.split(dataset)):
         train_dataset = [dataset[idx] for idx in train_index]
         test_dataset = [dataset[idx] for idx in test_index]
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> 52cd94670142a524ae166ca548b5c66f07ac4500
         model = copy.deepcopy(model1).to(device)
         criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=5e-4)

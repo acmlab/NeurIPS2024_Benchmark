@@ -333,8 +333,8 @@ def get_dataset(model_name, dataset_name):
             dataset = Dataset_WM(data_path, label_path, spatial=True, graph=True)     
 
     elif dataset_name == 'ADNI':
-        data_path = f'../data/ADNI/AAL90'
-        label_path = '../data/ADNI/label-2cls_new.csv'
+        data_path = f'./data/ADNI/AAL90'
+        label_path = './data/ADNI/label-2cls_new.csv'
         if model_name in sequential_models:
             dataset = Dataset_ADNI(data_path, label_path)
         elif model_name in other_spatial:
@@ -346,7 +346,7 @@ def get_dataset(model_name, dataset_name):
             dataset = Dataset_ADNI(data_path, label_path, spatial=True, graph=True)    
 
     elif dataset_name in ['PPMI', 'ABIDE']:
-        data_path = '../data/'+dataset_name
+        data_path = './data/'+dataset_name
         if model_name in sequential_models:
             dataset = Dataset_PPMI(data_path)
         elif model_name in other_spatial:
@@ -358,7 +358,7 @@ def get_dataset(model_name, dataset_name):
             dataset = Dataset_PPMI(data_path, spatial=True, graph=True) 
 
     elif dataset_name == 'OASIS':
-        data_path = '../data/'+dataset_name
+        data_path = './data/'+dataset_name
         if model_name in sequential_models:
             dataset = Dataset_OASIS(data_path)
         elif model_name in other_spatial:
